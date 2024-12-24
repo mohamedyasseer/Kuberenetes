@@ -1,0 +1,103 @@
+﻿Lab: Getting Started with Helm
+Objective:
+By the end of this lab, students will be able to:
+- Install Helm.
+- Understand and use basic Helm commands.
+- Deploy and manage applications with Helm charts.
+- Customize Helm charts.
+- Upgrade and roll back releases.
+Prerequisites:
+1. A working Kubernetes cluster.
+2. kubectl installed and configured.
+3. Helm installed on the local machine.
+1. Install Helm
+1. Download Helm:
+```
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+```
+2. Verify the installation:
+```
+helm version
+```
+2. Add a Helm Repository
+Repositories contain Helm charts that describe an application and its deployment. We'll use the official Helm stable repository for this lab.
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+```
+3. Search for a Chart
+Use `helm search` to find charts from repositories. For example, to search for `nginx`:
+```
+helm search repo nginx
+```
+4. Install an Application Using Helm
+To install an application, like `nginx`, using Helm:
+```
+helm install my-nginx bitnami/nginx
+```
+This will:
+- Download the `nginx` chart.
+- Deploy the `nginx` application in your Kubernetes cluster.
+Verify that the deployment is running:
+```
+kubectl get pods
+```
+5. Inspect Helm Releases
+To see the list of Helm releases:
+```
+helm list
+```
+6. View the Values of a Chart
+Each Helm chart comes with default values. To see the default configuration for the `nginx` chart:
+```
+helm show values bitnami/nginx
+```
+7. Upgrade a Release
+You can upgrade an existing release with modified values. Create a custom values file (`custom-values.yaml`):
+```yaml
+service:
+ type: LoadBalancer
+ ports: 
+      http: 8080
+      https: 443
+```
+Apply the changes to the running release:
+```
+helm upgrade my-nginx bitnami/nginx -f custom-values.yaml
+```
+8. Roll Back a Release
+Helm allows you to roll back to a previous version of the release. List the history of a release:
+```
+helm history my-nginx
+```
+Roll back to a specific revision:
+```
+helm rollback my-nginx 1
+```
+9. Uninstall a Release
+When you're done, you can uninstall the release:
+```
+helm uninstall my-nginx
+```
+10. Package and Deploy a Custom Chart
+Create a new Helm chart:
+```
+helm create mychart
+```
+Customize the chart by editing the files in the `mychart` directory. Once ready, package it:
+```
+helm package mychart
+```
+You can then deploy your custom chart to the Kubernetes cluster:
+```
+helm install my-release ./mychart
+```
+Key Helm Commands Recap:
+- `helm repo add [name] [url]` – Add a Helm repository.
+- `helm search repo [chart]` – Search for charts in repositories.
+- `helm install [release-name] [chart]` – Install a chart.
+- `helm list` – List installed releases.
+- `helm upgrade [release-name] [chart]` – Upgrade a release.
+- `helm rollback [release-name] [revision]` – Roll back to a previous release.
+- `helm uninstall [release-name]` – Uninstall a release.
+- `helm create [chart-name]` – Create a new chart.
